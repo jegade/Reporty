@@ -34,7 +34,7 @@
 
     [% IF results.size %]
 
-    <p>[% total %] Datensätze gefunden <a href="[% Catalyst.uri_for("/report/export", query => Catalyst.session.query, name => Catalyst.session.name ) %]">Als Excel-Export speichern</a></p>
+    <p>[% results.size %] Datensätze gefunden <a href="[% Catalyst.uri_for("/report/export", query => Catalyst.session.query, name => Catalyst.session.name ) %]">Als Excel-Export speichern</a></p>
 
     <div class="twelvecol">
 

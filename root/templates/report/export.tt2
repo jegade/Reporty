@@ -1,6 +1,6 @@
 <workbook>
     
-        <worksheet name="[% name | xml %]">
+        <worksheet name="[% name | xml | truncate(30) %]">
 
         <row>
             

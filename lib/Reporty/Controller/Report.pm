@@ -94,7 +94,7 @@ sub export : Local {
         } else {
 
             # Excel ausgeben - Excel::Template::Plus
-            $c->stash->{filename} = "query.xls";
+            $c->stash->{filename} = $name.".xls";
             $c->stash->{template} = 'report/export.tt2';
             $c->forward('Reporty::View::Excel');
 
