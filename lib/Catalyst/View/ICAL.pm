@@ -4,7 +4,7 @@ use utf8;
 use strict;
 use warnings;
 
-use NEXT;
+use MRO::Compat;
 
 use Data::ICal;
 use Data::ICal::Entry::Event;
@@ -33,7 +33,7 @@ sub new {
 
     my ( $class, $c, $args ) = @_;
 
-    my $self = $class->NEXT::new( $c, $args );
+    my $self = $class->maybe::next::method();
 
     my $config = $c->config->{'View::ICAL'};
 

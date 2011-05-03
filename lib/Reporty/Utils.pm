@@ -5,7 +5,6 @@ use warnings;
 use utf8;
 use File::Slurp qw/slurp/;
 use YAML qw/Load/;    # Lädt das Modul YAML und importiert die Funktion LoadFile
-use Reporty::Schema;
 use Template();
 use Template::Stash::XS();
 use Data::Dumper;
@@ -25,9 +24,9 @@ use Array::Utils qw(:all);
 use Digest::MD5 qw(md5 md5_hex md5_base64);
 
 use base 'Exporter';
-use vars qw/@EXPORT_OK $base_path $config $schema $tt2 $log $stomp $index $tm $es $cache/;
+use vars qw/@EXPORT_OK $base_path $config $tt2 $log/;
 
-@EXPORT_OK = qw/base_path config schema tt2 tm/;
+@EXPORT_OK = qw/base_path config tt2 tm/;
 
 use File::Spec;
 use Cwd qw/abs_path/;
@@ -121,31 +120,6 @@ sub _config_read {
     return Load($yaml_config);
 }
 
-=head2 schema
-
-    Datenbank-Handler, verbindet sich mit der Datenbank, aufgrund der in der config-datei vorgeben Parameter
-
-    Rückgabe: DBIx::Class::Schema
-
-=cut
-
-sub schema {
-
-    # Schema wurde schon verbunden, also globale Variable zurückgeben
-    return $schema if ($schema);
-
-    # Lese die Konfiguration, wenn diese nicht bereits gesetzt/ausgelesen ist
-    $config ||= config();
-
-    # Schema zur DB
-    $schema = Reporty::Schema->connect( @{ $config->{'Model::Database'}{connect_info} } );
-
-    # Zusätzliche Parameter setzen
-    $schema->media_dir( $config->{'Model::Database'}{media_dir} );
-    $schema->tmp_dir( $config->{'Model::Database'}{tmp_dir} );
-
-    return $schema;
-}
 
 =head2 tt2
 
@@ -727,49 +701,6 @@ sub uri_for {
 
 
 
-=head2 uri_for_media
-
-=cut
-
-sub uri_for_media {
-
-    my ( $self, $media_id, $kind ) = @_;
-
-    my $file = $self->schema->resultset('File')->search( { media_id => $media_id, kind => $kind } )->first;
-
-    if ( $file && -e $file->fs ) {
-
-        if ( $self->config->{modus} ne 'test' ) {
-
-            # mod_secdownload
-            my $uri     = sprintf( "/%s/%s", $file->subdir, $media_id . "-" . $kind . "." . $file->filetype );
-            my $timehex = sprintf( "%08x",   time() );
-            my $md5     = md5_hex( "reporty" . $uri . $timehex );
-
-            # URI for mod_secdownload
-            return "/media/" . $md5 . "/" . $timehex . $uri;
-
-        } else {
-
-            # normale URL
-            return $file->uri;
-        }
-
-    } else {
-
-        # Das Media suchen
-        my $media = $self->schema->resultset('Media')->find( { media_id => $media_id } );
-
-        if ( $media && $media->type ne 'image' ) {
-
-            return sprintf( "/static/images/dummy/%s_%s.png", ( $media->attribute->{subtype} || $media->attribute->{type} || 'dummy' ), $kind );
-
-        } else {
-
-            return sprintf( "/static/images/dummy/%s.png", $kind );
-        }
-    }
-}
 
 =head2 antispam
 

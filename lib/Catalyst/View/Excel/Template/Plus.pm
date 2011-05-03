@@ -4,7 +4,7 @@ use strict;
 use utf8;
 use warnings;
 
-use NEXT;
+use MRO::Compat;
 use Excel::Template::Plus;
 use Scalar::Util 'blessed';
 
@@ -24,7 +24,7 @@ __PACKAGE__->mk_accessors(
 
 sub new {
     my ( $class, $c, $args ) = @_;
-    my $self = $class->NEXT::new( $c, $args );
+    my $self = $class->maybe::next::method();
 
     my $config = $c->config->{'View::Excel::Template::Plus'};
 
