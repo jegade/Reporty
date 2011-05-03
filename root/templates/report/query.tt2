@@ -16,5 +16,47 @@
             <button>Query ausführen</button> 
         </textarea>
     </div>
+
+
+    [% IF results.size %]
+
+    <p>[% total %] Datensätze gefunden <a href="[% Catalyst.uri_for("/report/export", query => Catalyst.session.query ) %]">Als Excel-Export speichern</a></p>
+
+    <div class="twelvecol">
+
+        <table class="max">
+
+        <tr>
+
+        [% FOREACH name IN names %]
+
+            <th>[% name | html %]</th>    
+
+        [% END %]
+        </tr>
+
+        [% FOREACH result IN results %]
+
+            <tr>
+
+                [% FOREACH row IN result %]
+
+                    <td>[% row | html %]</td>
+
+                [% END %]
+
+            </tr>
+
+        [% END %]
+
+
+        </table>
+
+
+
+    </div>
+
+    [% END %]
+
 </div>
 

@@ -1,0 +1,24 @@
+<workbook>
+    
+        <worksheet name="Report">
+
+        <bold>
+            <row>
+                [% FOREACH name IN names %]
+    
+                    <cell size="[% name.length * 10 %]">[% name | xml %]</cell>    
+
+                [% END %]
+            </row>
+        </bold>
+        
+        [% FOREACH result IN results %]
+        <row>
+            [% FOREACH cell IN result %]
+               <cell>[% cell | xml %]</cell>
+            [% END %]
+        </row>
+        [% END %]
+
+        </worksheet>
+</workbook>
