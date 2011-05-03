@@ -1,0 +1,10 @@
+tmp/*
+root/media/*
+sql/current.sql
+index/*
+logs/*
+extern/elasticsearch/logs/*
+extern/elasticsearch/data/*
+*.un~
+*.swp
+messagequeue/mq.db

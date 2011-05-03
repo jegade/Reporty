@@ -1,0 +1,75 @@
+# rename this file to eventdatabase.yml and put a ':' after 'name' if
+# you want to use YAML like in old versions of Catalyst
+name: ReportyE
+
+
+log_dir: __path_to(log)__
+default_view: TT
+encoding: 'UTF-8'
+
+selfaddress: 'http://dev.nacworld.net:8004/'
+
+
+# 50MB pro Mitglied 
+user_quota: 52428800
+
+# 3 MB pro Datei maximal 
+file_quota: 3145728
+
+using_frontend_proxy: 1
+
+Email:
+    from: 'nak-nrw.de <fortbildungsdatenbank@nak-nrw.de>'
+    subject_prefix: 'Veranstaltungen'
+
+# Live-Betrieb - wird durch eventdatabase_dev.yml überschrieben wenn im Testbetrieb
+modus: live
+
+CustomError:
+    subject: 'Programmfehler'
+    template: 'mail/error.tt2'
+
+View::TT:
+    CATALYST_VAR: Catalyst
+    INCLUDE_PATH:
+        - __path_to(root/templates)__
+    WRAPPER: framework/wrapper
+    TIMER: 0
+    TEMPLATE_EXTENSION: .tt2
+    COMPILE_DIR: __path_to(tmp)__
+    COMPILE_PERL: 0
+    COMPILE_EXT: tac 
+    DEBUG: 0
+    RECURSION: 1
+    ENCODING: 'utf-8'
+    DEFAULT_ENCODING: 'utf-8'
+    RENDER_DIE: 1 
+
+# Excel::Template Config
+View::Excel::Template::Plus:
+    etp_config:
+        ENCODING: 'utf-8'
+        DEFAULT_ENCODING: 'utf-8'
+        INCLUDE_PATH:
+           - __path_to(root/templates)__
+
+
+
+View::JSON:
+    expose_stash: 'json'
+
+
+Plugin::Session:
+    rewrite: 1
+    param: 'session'
+    expires: 0 
+    cookie_expires: 0
+    flash_to_stash: 1
+    # verify_user_agent: 1 Don't works with Flash-Upload
+
+static:
+    dirs:
+     - media
+     - static
+        
+
