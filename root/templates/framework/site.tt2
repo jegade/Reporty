@@ -14,8 +14,8 @@
 
 
                 <div class="fivecol" id="logoblock"> 
-                    <a href="/dashboard"><img src="/static/images/logo.png" style="float: left; margin-right: 10px" /></a>
                     <h1>Reporty</h1> 
+                    <h3>mysql reporting tool</h3>
                 </div> 
  
                 <div class="sevencol last" id="toolblock"> 

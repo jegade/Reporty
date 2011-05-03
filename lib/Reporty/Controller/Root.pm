@@ -22,6 +22,27 @@ Reporty::Controller::Root - Root Controller for Reporty
 
 =head2 index
 
+=cut
+
+sub auto : Private {
+
+    my ( $self, $c ) = @_;
+
+    if ( $c->session->{config_done}  || $c->request->match =~ /configure/ ) {
+
+        return 1;
+
+    } else {
+    
+        $c->response->redirect("/report/configure"); 
+        $c->detach;
+
+    }
+
+}
+
+=head2 
+
 The root page (/)
 
 =cut
@@ -29,8 +50,7 @@ The root page (/)
 sub index :Path :Args(0) {
     my ( $self, $c ) = @_;
 
-    # Hello World
-    $c->response->body( $c->welcome_message );
+    $c->response->redirect( $c->uri_for('/report/query'));
 }
 
 =head2 default

@@ -1,0 +1,51 @@
+
+<div class="row">
+
+    <div class="twelvecol">
+
+        <form id="editscreen" method="post" action="[% Catalyst.uri_for('/report/configure') %]" name="registerscreen" enctype="multipart/form-data">
+            <h1>Verbindung bearbeiten</h1>
+            
+            <p>Bitte zuerst die Verbindungsdaten eintragen</p>
+
+                <ul class="form">
+                    <li>
+                        <label>Host/Port</label>
+                        <span class="error">[% Catalyst.session.config_error.host %] [% Catalyst.session.config_error.port %]</span>
+                        <input type="text" name="host" value="[% Catalyst.session.config_host  | html %]" style="width: 250px" maxlength="64"/>
+                        <input type="text" name="port" value="[% Catalyst.session.config_port  | html %]" style="width: 50px;" maxlength="5"/>
+                    </li>
+
+
+                    <li>
+                        <label>Benutzername</label> 
+                        <span class="error">[% Catalyst.session.config_error.user | html %]</span> 
+                        <input autocomplete="off" type="text" name="user" value="[% Catalyst.session.config_user  | html %]" style="width: 250px;" maxlength="128"/>
+                        <span class="description"></span>
+                    </li>
+
+                
+
+                    <li>
+                        <label>Kennwort</label>
+                        <input type="text" name="password" value="[% Catalyst.session.config_password  | html %]" />
+                    </li>
+
+                    <li>
+                        <label>Datenbank</label>
+                        <input type="text" name="database" value="[% Catalyst.session.config_database | html %]" />
+                    </li>
+
+                   <input type="hidden" name="done" value="1" />
+
+        
+                <li class="buttons">
+
+                    <button type="submit" name="submit"	>Änderung speichern</button>  | 
+                    <a href="[% Catalyst.uri_for('/report/query') %]">Abbrechen und zurück</a>
+                </li>
+            </ul>
+        </form>
+
+</div>
+</div>

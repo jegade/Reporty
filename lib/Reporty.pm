@@ -20,6 +20,14 @@ use Catalyst qw/
     -Debug
     ConfigLoader
     Static::Simple
+    CustomError
+    StackTrace
+    Unicode
+    
+    Session
+    Session::State::Cookie
+    Session::Store::File
+
 /;
 
 extends 'Catalyst';

@@ -1,2 +1,4 @@
 #!/bin/sh
-plackup script/reporty.psgi
+
+plackup -R lib --worker=10 -s Starman -p 8007 script/reporty.psgi
+

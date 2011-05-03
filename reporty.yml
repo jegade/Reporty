@@ -54,7 +54,7 @@ View::JSON:
 Plugin::Session:
     rewrite: 1
     param: 'session'
-    expires: 0 
+    expires:  19999999999
     cookie_expires: 0
     flash_to_stash: 1
     # verify_user_agent: 1 Don't works with Flash-Upload
