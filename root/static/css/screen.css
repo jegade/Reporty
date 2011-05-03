@@ -1,0 +1,448 @@
+
+#header {
+
+    padding-top: 5px;
+    border-bottom: 3px solid #106AA3;
+    position: relative;
+    background-color: #5792ce;
+    background-image: url(/static/images/noise.png);
+    background-repeat: repeat;
+}
+
+body {
+    background: #b2cde9 url("/static/images/noise.png") repeat scroll left top !important;
+}
+
+
+ul {
+    padding-left: 20px;
+}
+
+#header .row {
+    background: transparent;
+}
+
+#header ul {
+
+    text-align: right;
+}
+
+#header h1,
+#header h2,
+#header h3 {
+    font-weight: normal;
+}
+
+#header img {
+    margin-top: 5px;
+    margin-bottom: 0;
+}
+
+#headerblock {
+
+    position: relative;
+}
+
+#toolbar {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+}
+
+#logoblock {
+
+    position: relative;
+    color: #fff;
+}
+
+#logoblock h1 {
+    line-height: 36px;
+    margin-bottom: 0;
+}
+
+#logoblock h3 {
+    font-size: 1em;
+}
+
+#toolblock {
+    position: relative;
+
+}
+
+#toolblock ul {
+}
+
+#toolblock ul li {
+}
+
+#toolblock ul li a {
+    line-height: 30px;
+}
+
+#footer {
+
+}
+
+#footer p {
+    font-size: 11px;
+    text-align: center;
+    color: #999;
+}
+
+#footer a {
+
+    font-weight: normal;
+}
+
+#footer ul {
+
+   padding-top: 10px;
+   padding-left: 20px; 
+}
+
+#content {
+    padding-top: 10px;
+}
+
+#footer .row {
+    background: #FFF;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    border-left: 1px solid #c9bd9e;
+    border-right: 1px solid #c9bd9e;
+    border-bottom: 1px solid #c9bd9e;
+}
+
+#content .row {
+
+    border-right: 1px solid #c9bd9e;
+    border-left: 1px solid #c9bd9e;
+}
+
+ul.inlinelist li {
+    
+    display: inline-block;
+}
+
+#header ul.mainnav {
+
+    /*text-align: left;*/
+    padding: 5px 0 0 0;
+    margin: 0;
+}
+
+
+#header ul.mainnav li {
+
+    padding-right: 5px;
+    
+}
+
+#header ul.mainnav li a {
+
+    font-size: 1.0em;
+    padding: 0.5em 0.4em;
+    background-color: rgb(81, 145, 205);
+    color: #FFF;
+    font-family: "Lato", "Arial", "sans-serif";
+}
+
+#header ul.mainnav li.active {
+}   
+
+#header ul.mainnav li.active a {
+    color: #000;
+    background-color: transparent;
+}   
+
+#subnav  {
+
+    margin: 0 40px 0 0 ;
+}
+
+
+#subnav li {
+    display: inline;
+}
+
+#subnav li a {
+
+    color: #EEE;
+    padding: 0 1em;
+}
+
+ul.form {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+ul.form li {
+    padding: 6px 0 6px 6px ;
+    margin: 0;
+    /* position: relative; Probleme mit de Autocompleter */
+}
+
+ul.form li.buttons {
+    
+    padding: 9px 0 9px 0;
+}
+
+ul.form li.focus {
+
+    background: rgba(244, 242, 234,0.5); 
+
+}   
+
+ul.form ul  {
+
+    padding: 3px 3px 3px 20px;
+}
+
+ul.form ul li {
+    padding: 2px 0;
+}
+
+form span.error { /* war vorher ul.form span.error */
+    display: block;
+    line-height: 24px;
+    color: #900;
+}
+
+
+ul.form span.description {
+    color: #666;
+    font-size: 11px;
+    padding-left: 2px;
+    display: block;
+}
+
+ul.form label {
+    display: block;
+    text-align: left;
+    font-weight: bold;
+}
+
+ul.form label.inline {
+    font-weight: normal;
+}
+
+label.inner,
+ul.form label.inner {
+    font-weight: normal;
+    cursor: pointer;
+    padding: 1px 0;
+}
+
+ul.form label.inline {
+    
+    display: inline-block;
+}
+
+ul.form label span {
+    font-weight: normal;
+    font-size: 0.8em;
+    color: #999;
+}   
+
+/* Status-Meldungen */ 
+
+.row_msg {
+    background: transparent !important;
+}
+
+.info_msg, .status_msg, .warning_msg, .error_msg, .validation_msg {
+    
+    border: 1px solid;
+    margin:  9px 0 0 0;
+    padding: 15px 10px 15px 15px;
+    background-repeat: no-repeat;
+    background-position: 10px center;
+    color: #000;
+}
+
+.info_msg a,  
+.status_msg a, 
+.warning_msg a, 
+.error_msg a, 
+.validation_msg a {
+    
+    color: #000;
+    text-decoration: underline;
+
+}
+
+
+.info_msg {
+    border-color: #97bcde;
+    background-color: #cbddee;
+}
+
+
+.status_msg {
+    border-color: #b8d893;
+    background-color: #DFF2BF;
+}
+
+.warning_msg {
+    border-color: #ff8e8e;
+    background-color: #FEEFB3;
+}
+
+.error_msg {
+    border-color: #ff8e8e;
+    background-color: #FFBABA;
+}
+
+.validation_msg {
+
+    border-color: #baba95;
+    background-color: #FEEFB3;
+}
+
+
+table.max {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 9px;
+}
+
+table th {
+    
+    text-align: left;
+    padding: 3px 8px;
+    border-bottom: 1px solid #CCC;
+}
+
+table td {
+
+    padding: 3px 8px;
+    border-bottom: 1px solid #EEE;
+    vertical-align: top;
+}
+
+table tr:nth-child(even) {
+  background-color: #f9f8f4;
+}
+
+
+table tr:hover {
+    background-color: rgba(244, 242, 234,0.8);
+    cursor: pointer;
+}
+
+h1 span {
+    font-size: 0.5em;
+}
+
+h1 a {
+    font-weight: inherit;
+}
+
+.row_pager {
+    border-bottom: 1px solid #EEE;
+    padding-top: 5px;
+    padding-bottom: 5px;
+ }
+
+.pager {
+    text-align: center;
+   color: #999;
+}   
+
+
+.pager span,
+.pager a,
+.pager strong {
+    padding: 0 3px;
+}
+
+
+.row {
+    background: #fff;
+}
+
+.pager strong {
+    color: #000;
+}
+
+.row_event {
+
+    border-bottom: 1px solid #EEE;
+    cursor: pointer;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    background: #fff;
+ }
+
+.row_event:nth-child(even) {
+  background-color: #f9f8f4;
+}
+
+.row_event p {
+
+    padding: 3px 8px;
+}
+
+.row_event:hover {
+    background-color: rgba(244, 242, 234,1);
+    cursor: pointer;
+
+}
+
+
+.row_filter {
+    padding-top: 5px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid #EEE;
+}
+
+.row_filter p {
+    margin-bottom: 0;
+}
+
+.row p,
+.row h1,
+.row h2,
+.row h3,
+.row form {
+
+    padding: 3px 8px;
+}
+
+fieldset  {
+
+    border: 1px solid #eee;
+    padding: 10px;
+    margin: 0 0 10px 0;
+}
+
+
+.row .event_title {
+    margin-bottom: 0;
+
+}
+
+.row .event_date_title {
+    
+    margin-bottom: 0;
+}
+
+.row .event_date_begin,
+.row .event_description {
+    margin-top: 0;
+    padding-top: 0;
+    margin-bottom: 5px;
+}
+
+.icalfeed {
+    font-size: 11px;
+    font-weight: normal;
+}
+
+.row .marker {
+    margin: 10px;
+    padding: 10px;
+    background: #e3ef8e;
+}   
+

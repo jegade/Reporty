@@ -1,0 +1,22 @@
+<pre>
+<strong>[% loc("Systemfehlermeldung reporty") %]</strong>
+
+<strong>[% loc("Path") %]</strong>
+<a href="[% request.base %][% request.path %]">[% request.base %][% request.path %]</a>
+
+<strong>[% loc("Fehlermeldung") %]</strong>
+[% error %]
+
+<strong>[% loc("Benutzer") %]</strong>
+[% loc('Name') %] [% user.fullname | html %] 
+[% loc('E-Mail-Adresse') %] [% user.email | html %]
+
+<strong>[% loc("Post") %]</strong>
+[% USE Dumper %]
+[% Dumper.dump( request.params ) %]
+
+<strong>[% loc("Umgebung") %]</strong>
+[% loc('Browser') %]  [% request.user_agent %]
+[% loc('IP') %]       [% request.address    %]
+[% loc('Referrer') %] [% request.referer    %]
+</pre>

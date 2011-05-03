@@ -1,0 +1,21 @@
+[% IF Catalyst.flash.status_msg || status_msg  %]
+    <div class="row row_msg">
+        <div class="twelvecol status_msg">[% Catalyst.flash.status_msg  || status_msg | html_min %]</div>
+    </div>
+[% END %]
+
+[% IF Catalyst.flash.error_msg  || error_msg %]
+    <div class="row row_msg">
+     <div class="twelvecol error_msg">[% Catalyst.flash.error_msg || error_msg | html_min %]</div>
+    </div>
+[% END %]
+
+[% IF Catalyst.flash.info_msg || info_msg %]
+    <div class="row row_msg">
+     <div class="twelvecol info_msg">[% Catalyst.flash.info_msg || info_msg | html_min %]</div>
+    </div>
+[% END %]
+
+
+
+

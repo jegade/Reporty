@@ -1,0 +1,68 @@
+[% BLOCK bread_content %]
+<small><a href="#" id="openviewoptions" style="display: none;" >Ansicht anpassen</a></small>
+[% END %]
+
+<div id="viewoptions" class="hideoptions">
+
+
+    <h3>[% stitle %]</h3>
+    <p>[% sdescription %]</p>
+
+    <form method="get">
+
+        <ul class="form">
+       
+            [% FOREACH option IN options %]
+            
+            <li>
+                <label class="inline">[% option.title %]</label>
+                [% SET value = settings.${option.key} || option.default %]
+                [% SWITCH option.type %]
+                [% CASE "select" %]
+                    <select name="settings_[% option.key %]">
+                        [% FOREACH item IN option.list %]
+                            <option value="[% item.0 %]" [% IF item.0 == value; 'selected="selected"'; END; %]>[% item.1 %]</option>
+                        [% END %]
+                    </select>
+                
+                [% CASE "checkbox" %]
+                    
+                    [% FOREACH item IN option.list %]
+                        <input type="checkbox" name="settings_[% option.key %]" [% IF value.split(",").grep(item.0).size > 0; 'checked="checked"'; END; %] value="[% item.0 %]" /> [% item.1 %] <br />
+                    [% END %]
+
+                [% CASE "radio" %]
+                    
+                    [% FOREACH item IN option.list %]
+                        <input type="radio" name="settings_[% option.key %]" [% IF value == item.0; 'checked="checked"'; END; %] value="[% item.0 %]" /> [% item.1 %]
+                    [% END %]
+
+
+                [% CASE %]
+
+                [% END %]
+                
+            </li>
+
+
+            [% END %]
+
+          
+        </ul>
+
+            
+
+        [% IF settings.keys.size == 0 %]
+
+            <button type="submit" name="settings_update" value="update" >Ansicht festlegen</button>
+         
+        [% ELSE %]
+
+            <button type="submit" name="settings_update" value="update" >Änderungen anwenden</button>
+             [% Catalyst.loc('oder' ) %] 
+            <button type="submit" name="settings_reset" value="reset" class="second">auf die Standard-Ansicht zurücksetzen</button>
+        [% END %]
+
+    </form>
+
+</div>

@@ -1,0 +1,16 @@
+[% IF Catalyst.config.modus == 'live' # Im Livesystem kombinierte JS nutzen  %]
+
+    <script type="text/javascript" src="/static/js/live.js?2011030301"></script>
+
+[% ELSE %]
+
+    <script type="text/javascript" src="/static/js/mootools-core-1.3.1-full-compat.js"></script>
+    <script type="text/javascript" src="/static/js/mootools-more-1.3.1.1.js"></script>
+    <script type="text/javascript" src="/static/js/mootools.formalize.js"> </script>
+    <script type="text/javascript" src="/static/js/datepicker.js"> </script>
+    <script type="text/javascript" src="/static/js/custom.js"> </script>
+
+
+[% END %]
+
+

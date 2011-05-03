@@ -1,0 +1,71 @@
+/* Type & image presets */
+
+img, object, embed {
+margin-bottom: 20px;
+}
+
+body {
+font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
+font-size: 13px;
+line-height: 18px;		/* Changing this will break the baseline grid. */
+-webkit-text-size-adjust: none;		/* Stops the iPhone scalling type up */
+}
+
+a {
+text-decoration: none;
+color: #005698;
+font-weight: bold;
+}
+
+a:hover {
+color: #000;
+text-decoration: underline;
+}
+
+a img {
+    display: block;		/* Stops image links getting text link styles */
+}
+
+img {
+
+}
+
+p, ul, ol, blockquote {
+margin-bottom: 6px;	/* Changing this will break the baseline grid. */
+}
+
+li {
+margin-bottom: 6px;
+}
+
+blockquote {
+border-left: 1px solid #c1c1c1;
+color: #747474;
+padding-left: 15px;
+margin-left: -15px;
+}
+
+h1,h2,h3 {
+
+    font-family: Arial, sans-serif;
+}
+
+h1 {
+    font-size: 30px;
+    line-height: 42px; /* Changing this will break the baseline grid. */
+    margin-bottom: 0; /* Changing this will break the baseline grid. */
+    font-family: 'Lato', arial, serif;
+    font-weight: normal;
+}
+
+h2 {
+    font-size: 15px;
+    line-height: 30px;
+    margin-bottom: 0px;	/* Changing this will break the baseline grid. */
+}
+
+h3 {
+    font-size: 14px;
+    line-height: 18px;
+    margin-bottom: 6px;	/* Changing this will break the baseline grid. */
+}

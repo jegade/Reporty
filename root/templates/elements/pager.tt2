@@ -1,0 +1,78 @@
+[% # use Catalyst to request anything that needs to display %]
+[% SET burl      = Catalyst.action %]
+[% SET captures  = Catalyst.request.captures %]
+[% SET args      = Catalyst.request.args     %]
+
+<div class="pager">
+    
+    [% SET pager = resultset.pager %]
+
+    [% IF pager.first_page != pager.current_page  %]
+        <a href="[% Catalyst.request.uri_with( { page => 1 } ) %]">Erste Seite</a> 
+    [% ELSE %]
+        <span>Erste Seite</span>
+    [% END %]
+
+    [% IF pager.current_page > 1 %] 
+        | <a href="[% Catalyst.request.uri_with( { page => pager.previous_page } ) %]">Zurück</a>  
+    [% ELSE %]
+        | <span>Zurück</span>
+    [% END %]
+
+    [% IF pager.last_page < 11 %]
+
+        [% FOREACH page IN [ 1 .. pager.last_page ] %]
+            [% IF page == pager.current_page %]
+                | <strong>[% page %]</strong>    
+            [% ELSE %]
+                | <a href="[% Catalyst.request.uri_with( { page => page } ) %]">[% page %]</a> 
+            [% END %]
+        [% END %]
+
+    [% ELSE %]
+
+        [% IF pager.current_page > 3 %]
+                | <a href="[% Catalyst.request.uri_with( { page => 1 }  ) %]">1</a> 
+                | <span>…</span>
+        [% END %]
+        
+        [% SET von = pager.current_page - 3 %]
+        [% SET bis = pager.current_page + 3 %]
+        [% IF von < 1; von = 1; END %]
+        [% IF bis > pager.last_page; bis = pager.last_page; END %]
+
+
+        [% FOREACH page IN [ von .. bis ] %]
+            [% IF page == pager.current_page %]
+                | <strong>[% page %]</strong>    
+            [% ELSE %]
+                | <a href="[% Catalyst.request.uri_with( { page => page } ) %]">[% page %]</a> 
+            [% END %]
+        [% END %]
+
+            
+        [% IF pager.current_page < pager.last_page - 3 %]
+       
+            | <span>…</span>
+            | <a href="[% Catalyst.request.uri_with( { page => pager.last_page } ) %]">[% pager.last_page %]</a> 
+            
+        [% END %]
+
+    [% END %]
+   
+    [% IF pager.next_page %] 
+        | <a href="[% Catalyst.request.uri_with( {  page => pager.next_page } ) %]">Weiter</a> 
+    [% ELSE %]
+        | <span>Weiter</span>
+    [% END %]
+
+    [% IF pager.current_page != pager.last_page %]
+        | <a href="[% Catalyst.request.uri_with( { page => pager.last_page }  ) %]">Letzte Seite</a> 
+    [% ELSE %]
+        | <span>Letzte Seite</span>
+    [% END %]
+
+          
+
+</div>
+

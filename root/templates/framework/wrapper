@@ -1,0 +1,26 @@
+[% 
+
+    # E-Mail wrappen
+    IF template.name.match('^mail\/');
+        content WRAPPER framework/mail.tt2;
+
+    # IM 
+    ELSIF template.name.match('^im\/');
+        content WRAPPER framework/minimal.tt2;
+
+    # AJAX/XHR-Request wrappen - nur Inhaltstemplate zurückgeben
+    ELSIF Catalyst.request.header('X-Requested-With').match('XMLHttpRequest');
+
+        content;
+
+    ELSIF template.name.match('xhr_');
+        
+        content;
+    
+    ELSIF nowrapper;
+      
+
+    ELSE;
+        content WRAPPER framework/site.tt2;
+    END;
+%]
