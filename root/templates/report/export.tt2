@@ -1,12 +1,23 @@
 <workbook>
     
-        <worksheet name="Report">
+        <worksheet name="[% name | xml %]">
+
+        <row>
+            
+            <cell>[% name | xml %]</cell>
+        </row>
+
+        <row>
+
+            <cell>[% query | xml %]</cell>
+            
+        </row>
 
         <bold>
             <row>
                 [% FOREACH name IN names %]
     
-                    <cell size="[% name.length * 10 %]">[% name | xml %]</cell>    
+                    <cell width="[% name.length * 2 %]">[% name | xml %]</cell>    
 
                 [% END %]
             </row>
@@ -15,7 +26,7 @@
         [% FOREACH result IN results %]
         <row>
             [% FOREACH cell IN result %]
-               <cell>[% cell | xml %]</cell>
+               <cell width="[% cell.length * 2 %]">[% cell | xml %]</cell>
             [% END %]
         </row>
         [% END %]

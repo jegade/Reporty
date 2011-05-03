@@ -11,16 +11,30 @@
 
     <div class="twelvecol">
 
+        
+
         <form name="query" action="[% Catalyst.uri_for('/report/query') %]" method="post" />
+        
+        <ul class="form">
+
+            <li>
+            <input type="text" name="name" value="[% Catalyst.session.name | html %]" style="width: 300px"/>
+            </li>
+
+            <li>
             <textarea name="query" rows="10">[% Catalyst.session.query | html %]</textarea>    
+                </li>
+
+            <li>
             <button>Query ausführen</button> 
-        </textarea>
+            </li>
+        </ul>
     </div>
 
 
     [% IF results.size %]
 
-    <p>[% total %] Datensätze gefunden <a href="[% Catalyst.uri_for("/report/export", query => Catalyst.session.query ) %]">Als Excel-Export speichern</a></p>
+    <p>[% total %] Datensätze gefunden <a href="[% Catalyst.uri_for("/report/export", query => Catalyst.session.query, name => Catalyst.session.name ) %]">Als Excel-Export speichern</a></p>
 
     <div class="twelvecol">
 

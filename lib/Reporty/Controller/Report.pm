@@ -29,6 +29,7 @@ sub query : Local {
     my ( $self, $c ) = @_;
 
     my $query = $c->session->{query} = $c->request->params->{query};
+    my $name  = $c->session->{name}  = $c->request->params->{name};
 
     if ($query) {
 
@@ -43,9 +44,9 @@ sub query : Local {
             my $sth = $dbh->prepare($query);
             $sth->execute();
             $c->stash->{names}   = $sth->{'NAME'};
-            $c->stash->{results} = $sth->fetchall_arrayref( );
+            $c->stash->{results} = $sth->fetchall_arrayref();
 
-        }  ;
+        };
 
         $c->stash->{error_msg} = $@ if $@;
     }
@@ -64,6 +65,7 @@ sub export : Local {
     my ( $self, $c ) = @_;
 
     my $query = $c->session->{query} = $c->request->params->{query};
+    my $name  = $c->session->{name}  = $c->request->params->{name};
 
     if ($query) {
 
@@ -78,17 +80,19 @@ sub export : Local {
             my $sth = $dbh->prepare($query);
             $sth->execute();
             $c->stash->{names}   = $sth->{'NAME'};
-            $c->stash->{results} = $sth->fetchall_arrayref( );
+            $c->stash->{results} = $sth->fetchall_arrayref();
 
-        }  ;
+            $c->stash->{query} = $query;
+            $c->stash->{name}  = $name;
+        };
 
-        if ( $@ ) {
+        if ($@) {
 
             $c->flash->{error_msg} = $@ if $@;
-            $c->response->redirect( $c->uri_for('/report/query') ) ; 
+            $c->response->redirect( $c->uri_for('/report/query') );
 
         } else {
-    
+
             # Excel ausgeben - Excel::Template::Plus
             $c->stash->{filename} = "query.xls";
             $c->stash->{template} = 'report/export.tt2';
@@ -98,8 +102,8 @@ sub export : Local {
 
     } else {
 
-            $c->flash->{error_msg} = "Bitte eine Query definieren";
-            $c->response->redirect( $c->uri_for('/report/query') ) ; 
+        $c->flash->{error_msg} = "Bitte eine Query definieren";
+        $c->response->redirect( $c->uri_for('/report/query') );
 
     }
 
@@ -119,9 +123,8 @@ sub configure : Local {
 
         my $done = $c->session->{config_done} = $c->request->params->{done} || 0;
     }
-    i
 
-      $c->stash->{template} = 'report/configure.tt2';
+    $c->stash->{template} = 'report/configure.tt2';
 
 }
 
