@@ -60,7 +60,7 @@ sub finalize_error {
     $c->stash->{request}   = $c->request;
     $c->stash->{tracepath} = $c->session->{tracepath};
 
-    Nacworld::Com->sendmail( {
+    Reporty::Com->sendmail( {
         from     => $c->technical_user,
         to       => $c->technical_user,
         subject  => $c->config->{CustomError}{subject},

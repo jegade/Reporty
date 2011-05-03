@@ -13,7 +13,7 @@ use Reporty::Utils qw/config/;
 use HTML::FormatText::WithLinks;
 use Encode;
 use Mojo::DOM;
-
+use CSS::Inliner;
 
 =head1 Beschreibung
 
@@ -52,24 +52,33 @@ sub sendmail {
     # Prefix für den Betreff über Argumente setzen oder aus der Config ermitteln
     my $subject_prefix = "[" . ( $args->{subject_prefix} || $config->{Email}{subject_prefix} ) . "]";
 
+    my $locale_from = $args->{from}->locale;
+    my $locale_to   = $args->{to}->locale;
+
     # Reply-Address - Todo Kontaktstatus ermitteln
-    my $reply = sprintf( "%s <%s>", encode_mimeword( $args->{from}->fullname ), $args->{from}->email );
+    my $reply = ( $args->{from}->privacy_email ne 'all' && !$args->{reply_ok} ) ? 'no-reply@nacworld.net' : sprintf( "%s <%s>", encode_mimeword( $args->{from}->fullname ), $args->{from}->email );
 
     # Offline-Benutzer nicht mehr anschreiben
     return if ( !$args->{ignorestatus} && ( $args->{to}->status eq 'locked' || $args->{to}->status eq 'deleted' ) );
 
+    # Lokalisierung als Callback für die Sprache des Empfängers
+    $args->{stash}{loc}           = sub { return Reporty::Utils->loc( $locale_to, @_ ); };
+    $args->{stash}{uri_for_media} = sub { Reporty::Utils->uri_for_media(@_) };
+    $args->{stash}{uri_for}       = sub { Reporty::Utils->uri_for(@_) };
+
+    $args->{stash}{Catalyst}{loc}           = $args->{stash}{loc};
+    $args->{stash}{Catalyst}{uri_for_media} = $args->{stash}{uri_for_media};
+    $args->{stash}{Catalyst}{uri_for}       = $args->{stash}{uri_for};
 
     # Basis-CSS-Styles - hässlich aber zentral
     $args->{stash}{css_border}       = qq/style="border: 1px solid #EEE; float:  left; padding: 5px; margin: 0 5px 5px 0"/;
     $args->{stash}{css_border_right} = qq/style="border: 1px solid #EEE; float: right; padding: 5px; margin: 0 5px 5px 0"/;
+    $args->{stash}{css_left_float}   = qq/style="float: left; padding: 5px; margin: 0 5px 5px 0; border: 0 none;"/;
     $args->{stash}{css_clear}        = qq/style="clear: both"/;
-
-
-    $args->{stash}{config} = $config;
 
     # Template evaluieren
     my $html = "";
-    $tt->process( $args->{template}, $args->{stash}, \$html ) || warn $html;
+    $tt->process( $args->{template}, $args->{stash}, \$html, ) || warn $html;
 
     # Nachrichtenobjekt erzeugen
     my $msg = MIME::Lite->new(
@@ -91,22 +100,29 @@ sub sendmail {
     $msg->add( 'List-ID' => $config->{Email}{from} );
     $msg->add( 'Precedence', 'list' );
 
-    my $parser = MIME::Lite::HTML->new( IncludeType => 'cid', HTMLCharset => 'UTF-8', 'TextCharset' => 'UTF-8', 'TextEncoding' => '8bit', 'HTMLEncoding' => '8bit' );
+    my $parser = MIME::Lite::HTML->new( IncludeType => 'cid', HTMLCharset => 'UTF-8', 'TextCharset' => 'UTF-8', 'TextEncoding' => '8bit', 'HTMLEncoding' => 'base64' );
 
     my $f = HTML::FormatText::WithLinks->new(
         before_link => '',
-        after_link  => ' [%l]',
+        after_link  => "\n[%l]\n",
         footnote    => '',
+        base        => $config->{selfaddress},
     );
 
-    my $phtml = encode( "utf-8", $html );
+    # CSS evaluieren
+    my $inliner = CSS::Inliner->new( { leave_style => 1 } );
+    $inliner->read( { html => $html } );
+    $html = $inliner->inlinify();
 
+    my $phtml = encode( "utf-8", $html );
 
     my $plain = $f->parse($phtml);
     $plain =~ s/\[IMAGE\]//g;
 
+    my $pplain = encode( "utf-8", $plain );
+
     # MIME::Part
-    my $part = $parser->parse( $phtml, $plain, $config->{selfaddress} );
+    my $part = $parser->parse( $phtml, $pplain, $config->{selfaddress} );
 
     # HTML-Teil anfügen
     $msg->attach($part);
@@ -152,9 +168,9 @@ sub sendmail {
     my $dom = Mojo::DOM->new;
     $dom->parse($html);
     my $m = $dom->at('#content')->inner_xml;
-    $m=~ s/[\n\r]//g;
+    $m =~ s/[\n\r]//g;
     return $m;
-    
+
 }
 
 =head2 sms

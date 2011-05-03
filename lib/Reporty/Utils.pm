@@ -23,19 +23,15 @@ use URI::Find::UTF8;
 use URI::Escape;
 use Array::Utils qw(:all);
 use Digest::MD5 qw(md5 md5_hex md5_base64);
-use ElasticSearch;
 
 use base 'Exporter';
-use vars qw/@EXPORT_OK $base_path $config $schema $tt2 $log $stomp $index $es/;
+use vars qw/@EXPORT_OK $base_path $config $schema $tt2 $log $stomp $index $tm $es $cache/;
 
 @EXPORT_OK = qw/base_path config schema tt2 tm/;
 
 use File::Spec;
 use Cwd qw/abs_path/;
 my ( undef, $path ) = File::Spec->splitpath(__FILE__);
-
-# Import des Path nach USE
-Locale::Maketext::Simple->import( Export => "_loc", Path => abs_path( $path . '/I18N' ), Decode => 1, );
 
 =head1 Beschreibung
 
@@ -57,6 +53,9 @@ sub base_path {
     return $base_path;
 }
 
+
+
+
 =head2 config
 
     Die Konfiguration der Anwendung lesen
@@ -67,9 +66,9 @@ sub config {
 
     return $config if ($config);
 
-    my $base_config_file = "$path/../../eventdatabase.yml";
-    my $beta_config_file = "$path/../../eventdatabase_beta.yml";
-    my $dev_config_file  = "$path/../../eventdatabase_dev.yml";
+    my $base_config_file = "$path/../../reporty.yml";
+    my $beta_config_file = "$path/../../reporty_beta.yml";
+    my $dev_config_file  = "$path/../../reporty_dev.yml";
 
     # Default - Produktions-Config
     if ( -e $base_config_file ) {
@@ -177,66 +176,6 @@ sub tt2 {
 }
 
 
-=head2 stomp
-
-=cut
-
-sub stomp {
-
-    return $stomp if $stomp;
-
-    $config ||= config();
-    $stomp = Net::Stomp->new( { hostname => $config->{'MessageQueue'}{host}, port => '61613' } );
-    $stomp->connect( { login => $config->{'MessageQueue'}{user}, passcode => $config->{'MessageQueue'}{password} } );
-    return $stomp;
-
-}
-
-=head2 stomp_publish
-
-=cut
-
-sub stomp_publish {
-
-    my ( $self, $queue, $message ) = @_;
-    eval {
-
-        $stomp = stomp();
-        $stomp->send( { destination => $queue, body => encode_json($message) } );
-    };
-
-    if ($@) {
-        warn $@;
-    }
-}
-
-=head2 stomp_subscribe
-
-=cut
-
-sub stomp_subscribe {
-
-    my ( $self, $queue, $callback ) = @_;
-
-    $stomp = stomp();
-
-    $stomp->subscribe(
-        {
-            destination             => $queue,
-            ack                     => 'client',
-            'activemq.prefetchSize' => 1,
-
-        }
-    );
-
-    while (1) {
-
-        my $frame = $stomp->receive_frame;
-        &$callback( $stomp, $queue, $frame );
-        $stomp->ack( { frame => $frame } );
-    }
-
-}
 
 =head2 dump
 
@@ -361,6 +300,25 @@ sub tmpfile {
 }
 
 
+=head2 numiso
+    
+    Nummer formatieren - Internationales Format - Unicode geschütztes kurzes Leerzeichen. Ab mehr als 4 Stellen
+ 
+    http://de.wikipedia.org/wiki/Schreibweise_von_Zahlen#ISO
+
+=cut
+
+sub numiso {
+
+    my ( $self, $number ) = @_;
+    $number =~ s/\D//g;
+    return $number if length($number) < 5;
+    my $thousand = ' ';
+    while ( $number =~ s/^([-+]?\d+)(\d{3})/$1$thousand$2/s ) { 1 }
+
+    return $number;
+}
+
 =head2 sanitize
 
 =cut
@@ -463,24 +421,6 @@ sub radius_coordinates {
     return ( $lon1, $lon2, $lat1, $lat2 );
 }
 
-=head2 elasticsearch
-
-    ElasticSerach 
-
-=cut
-
-sub elasticsearch {
-
-    return $es if ( $es ) ;
-
-    $es = ElasticSearch->new(
-        servers      => '127.0.0.1:9200',
-        transport    => 'httplite',         # default 'http'
-        max_requests => 10_000,             # default 10_000
-    );
-
-    return $es;
-}
 
 =head2 html_text
 
@@ -749,7 +689,7 @@ sub oembetify {
                 # Kürze Pfad wenn mehr als 40 Zeichen lang
                 my $path = decode( 'utf8', length( $uri->path ) > 40 ? encode( 'utf8', " … " ) . substr( $uri->path, -40, 40 ) : $uri->path );
 
-                if ( $uri->host =~ /(youtube|flickr|vimeo|oohEmbed|amazon|eventdatabase)/ ) {
+                if ( $uri->host =~ /(youtube|flickr|vimeo|oohEmbed|amazon|reporty)/ ) {
 
                     return sprintf( qq|<a class="oembed" href="%s">%s</a>|, $uri->as_string, $uri->host . $path );
 
@@ -775,6 +715,18 @@ sub oembetify {
     return $text;
 }
 
+
+sub uri_for {
+
+    my ( $self, @args ) = @_;
+    my $uri = join("/", @args);
+    $uri =~ s|/+|/|g;
+    return $uri;
+
+}
+
+
+
 =head2 uri_for_media
 
 =cut
@@ -792,7 +744,7 @@ sub uri_for_media {
             # mod_secdownload
             my $uri     = sprintf( "/%s/%s", $file->subdir, $media_id . "-" . $kind . "." . $file->filetype );
             my $timehex = sprintf( "%08x",   time() );
-            my $md5     = md5_hex( "eventdatabase" . $uri . $timehex );
+            my $md5     = md5_hex( "reporty" . $uri . $timehex );
 
             # URI for mod_secdownload
             return "/media/" . $md5 . "/" . $timehex . $uri;
@@ -823,7 +775,7 @@ sub uri_for_media {
 
     Codiert alle Zeichen der E-Mailadresse in HTML-Entities um
     
-    [% 'info@eventdatabase.net' | antispam %]
+    [% 'info@reporty.net' | antispam %]
 
 =cut
 
@@ -832,92 +784,6 @@ sub antispam {
     my $text = shift;
     return encode_entities( $text, '\x00-\xff' );
 }
-
-=head2 watermark
-    
-    Eine Zeichenkette, auch HTML,  vor der Ausgabe so aufbereiten, das eine Nachverfolgung möglich wird
-
-
-=cut
-
-sub watermark {
-
-    my ( $self, $text, $id ) = @_;
-
-    # Zeichen die ersetzt werden können
-
-    my $i = [qw/a c e o p x y i B H K M T A B E H I K M N O P T X Y Z g h o o q u 3 4 6 h i j ѕ ß/];
-    my $o = [qw/а с е о р х у וֹ В Н К М Т Α Β Ε Η Ι Κ Μ Ν Ο Ρ Τ Χ Υ Ζ ց հ ס օ զ ս З Ч б һ і ј s β/];
-
-    my $set = {};
-
-    foreach my $n ( 0 .. 9 ) {
-
-        $set->{$n}[0] = $i->[$n];
-        $set->{$n}[1] = $o->[$n];
-
-        $set->{$n}[2] = $i->[ $n + 10 ];
-        $set->{$n}[3] = $o->[ $n + 10 ];
-
-        $set->{$n}[4] = $i->[ $n + 20 ];
-        $set->{$n}[5] = $o->[ $n + 20 ];
-
-        $set->{$n}[6] = $i->[ $n + 30 ];
-        $set->{$n}[7] = $o->[ $n + 30 ];
-    }
-
-    # ID wird aufgesplitted
-    my @counts = split "", $id;
-
-    my $pos = 0;
-
-    # Zeichen werden ersetzt
-    foreach my $count (@counts) {
-
-        $pos++;
-
-        # Zeichen zur Ersetzung
-        my $char_i_one   = $set->{$count}[0];
-        my $char_o_one   = $set->{$count}[1];
-        my $char_i_two   = $set->{$count}[2];
-        my $char_o_two   = $set->{$count}[3];
-        my $char_i_three = $set->{$count}[4];
-        my $char_o_three = $set->{$count}[5];
-        my $char_i_four  = $set->{$count}[6];
-        my $char_o_four  = $set->{$count}[7];
-
-        my $c_one   = 0;
-        my $c_two   = 0;
-        my $c_three = 0;
-        my $c_four  = 0;
-
-        #print "Ersetze $char_i to $char_o an $pos\n";
-
-        # Vorkommen suchen
-        $text =~ s/($char_i_one)/++$c_one==$pos ? $char_o_one : $1/ge;
-        $text =~ s/($char_i_two)/++$c_two==$pos ? $char_o_two : $1/ge;
-        $text =~ s/($char_i_three)/++$c_three==$pos ? $char_o_three : $1/ge;
-        $text =~ s/($char_i_four)/++$c_four==$pos ? $char_o_four : $1/ge;
-
-    }
-
-    return $text;
-}
-
-=head2 apply_timezone
-
-    Wandle übergebenes Datetime-Objekt in die Zeitzone des Nutzers und gibt dieses zurück
-
-=cut
-
-sub apply_timezone {
-
-    my ( $self, $dt, $tz ) = @_;
-    return unless $dt;
-    $dt->set_time_zone( $tz );
-    return $dt;
-}
-
 
 
 1;
